@@ -3,6 +3,7 @@ import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { HttpExceptionFilter } from './exception/http-exception.filter';
 import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { HealthController } from './health/health.controller/health.controller';
+import { TerminusModule } from '@nestjs/terminus';
 
 @Module({
   imports: [TerminusModule, PrometheusModule.register()],
