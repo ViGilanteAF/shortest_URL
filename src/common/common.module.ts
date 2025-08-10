@@ -1,17 +1,21 @@
-import { RequestValidationPipe } from './validation/request-validation';
-import { APP_FILTER, APP_PIPE } from '@nestjs/core';
-import { HttpExceptionFilter } from './exception/http-exception.filter';
 import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { HealthController } from './health/health.controller/health.controller';
+import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { TerminusModule } from '@nestjs/terminus';
+import { Environment } from '../config/env.validation';
+import { HttpExceptionFilter } from './exception/http-exception.filter';
+import { HealthController } from './health/health.controller';
+import { HealthModule } from './health/health.module';
+import { LoggingInterceptor } from './logging/logging';
+import { RequestValidationPipe } from './validation/request-validation';
 
 @Module({
-  imports: [TerminusModule, PrometheusModule.register()],
+  imports: [TerminusModule, PrometheusModule.register(), HealthModule],
   controllers: [HealthController, HealthController],
   providers: [
     Logger,
     { provide: APP_PIPE, useClass: RequestValidationPipe },
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
+    { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
   ],
 })
 export class CommonModule implements NestModule {
