@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule as NestConfigModule } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -7,6 +8,14 @@ import { Module } from '@nestjs/common';
       validate: validate,
       load: [serverConfig, databaseConfig],
       isGlobal: true,
+    }),
+    MongooseModule.forRootAsync({
+      inject: [ConfigModule.KEY],
+      useFactory: (config: ConfigType<typeof databaseConfig>) => config,
+    }),
+    CacheModule.registerAsync({
+      inject: [cacheConfig.KEY],
+      useFactory: (config: ConfigType<typeof cacheConfig>) => config,
     }),
   ],
 })
