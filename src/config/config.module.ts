@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/common/cache';
+import { ConfigType } from '@nestjs/config';
 import { ConfigModule as NestConfigModule } from '@nestjs/core';
+import { validate } from 'class-validator';
 
 @Module({
   imports: [
