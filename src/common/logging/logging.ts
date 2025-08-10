@@ -15,6 +15,7 @@ export class LoggingInterceptor implements NestInterceptor {
     return this._logger;
   }
   constructor(private readonly _logger: Logger) {}
+
   intercept(
     context: ExecutionContext,
     next: CallHandler<any>,
