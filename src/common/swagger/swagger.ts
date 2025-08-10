@@ -1,12 +1,13 @@
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Environment } from '../../config/env.validation';
 
 export const setUpSwagger = (app: INestApplication) => {
   const config = new DocumentBuilder()
     .setTitle('ShotestURL Service')
     .setDescription(
       `URL 을 단축 해주는 서비스 ${
-        process.env.NODE_ENV == Environment.Prodictio
+        process.env.NODE_ENV == Environment.Production
           ? 'Development'
           : 'Production'
       } API 문서 입니다.`,
