@@ -1,13 +1,7 @@
-import { Controller, Get, UseInterceptors } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
-import { IsNumber } from 'class-validator';
-import { ResponseValidationInterceptor } from '../validation/response-validation';
 
-class Test {
-  @IsNumber()
-  status: number;
-}
 @ApiTags('Health')
 @Controller('health')
 export class HealthController {
@@ -18,7 +12,6 @@ export class HealthController {
 
   @Get()
   @HealthCheck()
-  @UseInterceptors(new ResponseValidationInterceptor(Test))
   check() {
     return this._health.check([]);
   }
