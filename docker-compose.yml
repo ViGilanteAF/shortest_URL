@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  shortest-url:
+    container_name: shortest-url
+    build:
+      context: ./shortest-url
+      dockerfile: Dockerfile.dev
+    ports:
+      - 3000:3000
+    volumes:
+      - ./shortest-url:/app
+      - /app/node_modules
