@@ -1,13 +1,34 @@
 version: '3.8'
 
 services:
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - "2701:2701"
+    environment:
+      - MONGO_INIT DB_ROOT_USERNAME=root
+      - MONGO_INIT DB_ROOT_PASSWORD=root_password
+      - MONGO_INIT DB_DATABASE=dev_database
+    volumes:
+      - ./mongodb/initdb.d:/docker-entrypoint-initdb.d:ro
+      - mongodb:/data/db
+
+
   shortest-url:
     container_name: shortest-url
     build:
       context: ./shortest-url
       dockerfile: Dockerfile.dev
     ports:
-      - 3000:3000
+      - "3000:3000"
     volumes:
       - ./shortest-url:/app
       - /app/node_modules
+    depends_on:
+      - mongodb
+
+volumes:
+  mongodb:
+
