@@ -1,20 +1,22 @@
 import { Module } from '@nestjs/common';
 import { CacheModule } from '@nestjs/common/cache';
-import { ConfigType } from '@nestjs/config';
-import { ConfigModule as NestConfigModule } from '@nestjs/core';
+import { ConfigModule as NestConfigModule, ConfigType } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import { validate } from 'class-validator';
+import { configServer } from './config';
+import { configDatabase } from './configDatabase';
 
 @Module({
   imports: [
     NestConfigModule.forRoot({
       envFilePath: `${__dirname}/env/.env.${process.env.NODE_ENV}`,
       validate: validate,
-      load: [serverConfig, databaseConfig],
+      load: [configServer, configDatabase],
       isGlobal: true,
     }),
     MongooseModule.forRootAsync({
-      inject: [ConfigModule.KEY],
-      useFactory: (config: ConfigType<typeof databaseConfig>) => config,
+      inject: [configDatabase.KEY],
+      useFactory: (config: ConfigType<typeof configDatabase>) => config,
     }),
     CacheModule.registerAsync({
       inject: [cacheConfig.KEY],
