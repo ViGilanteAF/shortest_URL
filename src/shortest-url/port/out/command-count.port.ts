@@ -1,3 +1,3 @@
 export abstract class CountCommandPort {
-  abstract findOneAndIncreate(): Promise<number>;
+  abstract findCountAndIncreate(): Promise<number>;
 }
