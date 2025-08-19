@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ShortestUrl } from '../domain/shortest-url';
-import { ShortestUrlCommandPort } from '../port/out/shortest-url-command';
+import { ShortestUrlCommandPort } from '../port/out/shortest-url-command.port';
 import { ShortestUrlEntity } from './shortest-url.entity';
 import { ShortestUrlMapper } from './shortest-url.mapper';
 

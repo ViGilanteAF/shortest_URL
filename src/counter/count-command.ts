@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ShortestUrlCommand } from '../shortest-url/port/out/shortest-url-command';
+import { ShortestUrlCommandPort } from '../shortest-url/port/out/shortest-url-command.port';
 import { CountEntity } from './entity/count.entity';
 
 @Injectable()
-export class CountCommand implements ShortestUrlCommand {
+export class CountCommand implements ShortestUrlCommandPort {
   constructor(
     @InjectModel(CountEntity.name)
     private readonly countModel: Model<CountEntity>,
