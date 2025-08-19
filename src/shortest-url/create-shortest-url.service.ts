@@ -3,13 +3,13 @@ import { ShortestUrl } from './domain/shortest-url';
 import { CreateShortestUrlCommand } from './port/in/create-shortest-url-command';
 import { CreateShortestUrlUseCase } from './port/in/create-shortest-url.use-case';
 import { GetCount } from './port/in/get-count';
-import { ShortestUrlCommand } from './port/out/shortest-url-command';
+import { ShortestUrlCommandPort } from './port/out/shortest-url-command.port';
 
 @Injectable()
 export class CreateShortestUrlService implements CreateShortestUrlUseCase {
   constructor(
     private readonly getCount: GetCount,
-    private readonly ShortestUrlCommand: ShortestUrlCommand,
+    private readonly ShortestUrlCommand: ShortestUrlCommandPort,
   ) {}
 
   async execute(command: CreateShortestUrlCommand): Promise<ShortestUrl> {
