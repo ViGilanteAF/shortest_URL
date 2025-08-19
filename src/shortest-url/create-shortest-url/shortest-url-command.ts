@@ -19,7 +19,10 @@ export class ShortestUrlCommandAdapter implements ShortestUrlCommandPort {
     return ShortestUrlMapper.entityToDomain(shortestUrlEntity);
   }
 
-  increaseVisitCount(shortestUrlId: string): Promise<void> {
-    throw new Error('Method not implemented');
+  async increaseVisitCount(shortestUrlId: string): Promise<void> {
+    await this.shortestUrlModel.updateOne(
+      { _id: shortestUrlId },
+      { $inc: { visitCount: 1 } },
+    );
   }
 }
