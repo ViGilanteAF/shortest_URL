@@ -15,11 +15,12 @@ import { CreateShortestUrlKeyResponse } from './create-shortest-url/create-short
 import { CreateShortestUrlRequestBody } from './create-shortest-url/create-shortest-url.request';
 import { CreateShortestUrlsResponse } from './create-shortest-url/create-shortest-urls.response';
 import { RedirectOriginalUrlRequest } from './create-shortest-url/redirect-original-url.request';
-import { GetShortestUrlsQuery } from './port/get-shortest-urls.query';
+import { ShortestUrl } from './domain/shortest-url';
 import { CreateShortestUrlCommand } from './port/in/create-shortest-url-command';
 import { CreateShortestUrlUseCase } from './port/in/create-shortest-url.use-case';
 import { GetOriginalUrlQuery } from './port/in/get-original-url.query';
 import { GetOriginalUrlUseCase } from './port/in/get-original-url.use-case';
+import { GetShortestUrlsQuery } from './port/in/get-shortest-urls.query';
 import { GetShortestUrlsUseCase } from './port/in/get-shortest-urls.use-case';
 
 @ApiTags('Shortest URL API')
@@ -61,7 +62,7 @@ export class ShortestUrlController {
       'application/json': {
         example: generateErrorExample(
           HttpStatus.INTERNAL_SERVER_ERROR,
-          '/api/shortest-urls',
+          '/shortest-urls',
           '서버 오류 입니다. 잠시후 다시 시도해두세요!',
         ),
       },
@@ -84,7 +85,7 @@ export class ShortestUrlController {
     summary: '원본 URL 리다이렉트 API',
     description: '단축된 URL을 원본으로 되돌립니다.',
   })
-  @ApiFoundResponse({ description: 'Sucess' })
+  @ApiFoundResponse({ description: 'Success' })
   @ApiBadRequestResponse({
     description: 'param 오류',
     content: {
@@ -129,7 +130,7 @@ export class ShortestUrlController {
       },
     },
   })
-  @Get(':shortestUrlKey')
+  @Get('shortest-urls/:shortestUrlKey')
   @Redirect()
   async RedirectOriginalUrlRequest(@Param() path: RedirectOriginalUrlRequest) {
     const query = GetOriginalUrlQuery.builder()
@@ -184,9 +185,13 @@ export class ShortestUrlController {
     new ResponseValidationInterceptor(CreateShortestUrlsResponse),
   )
   async getShortestUrls(
-    @Query() query: GetShortestUrlsQuery,
-  ): Promise<CreateShortestUrlsResponse> {
-    return { shortestUrls: [], totalCount: 0 };
+    @Query() requestQuery: GetShortestUrlsQuery,
+  ): Promise<{ shortestUrls: ShortestUrl[]; totalCount: number }> {
+    const query = GetShortestUrlsQuery.builder()
+      .set('pageNumber', requestQuery.pageNumber)
+      .set('pageSize', requestQuery.pageSize)
+      .build();
+    return this.getShortestUrlsUseCase.execute(query);
   }
 }
 

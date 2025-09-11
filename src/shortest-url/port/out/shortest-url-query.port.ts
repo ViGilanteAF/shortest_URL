@@ -5,7 +5,7 @@ export abstract class QueryShortestUrlPort {
     shortestUrlKey: string,
   ): Promise<ShortestUrl | null>;
   abstract findShortestUrls(
-    offset: number,
+    skip: number,
     limit: number,
   ): Promise<ShortestUrl[]>;
   abstract count(): Promise<number>;

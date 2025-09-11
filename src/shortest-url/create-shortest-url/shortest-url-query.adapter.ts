@@ -7,13 +7,15 @@ import { ShortestUrlEntity } from './shortest-url.entity';
 import { ShortestUrlMapper } from './shortest-url.mapper';
 
 @Injectable()
-export class QueryShortestUrl implements QueryShortestUrlPort {
+export class QueryShortestUrlAdapter implements QueryShortestUrlPort {
   constructor(
     @InjectModel(ShortestUrlEntity.name)
     private readonly shortestUrlModel: Model<ShortestUrlEntity>,
   ) {}
 
-  async findShortestUrl(shortestUrlKey: string): Promise<ShortestUrl | null> {
+  async findShortestUrlByKey(
+    shortestUrlKey: string,
+  ): Promise<ShortestUrl | null> {
     const shortestUrlEntity = await this.shortestUrlModel.findOne({
       key: shortestUrlKey,
     });
@@ -22,13 +24,15 @@ export class QueryShortestUrl implements QueryShortestUrlPort {
     );
   }
 
-  //임시메서드
-  findShortestUrls(offset: number, limit: number): Promise<ShortestUrl[]> {
-    throw new Error('Method not implemented.');
+  async findShortestUrls(skip: number, limit: number): Promise<ShortestUrl[]> {
+    const shortestUrlEntities = await this.shortestUrlModel
+      .find()
+      .skip(skip)
+      .limit(limit);
+    return ShortestUrlMapper.entitiesToDomains(shortestUrlEntities);
   }
 
-  //임시메서드
   count(): Promise<number> {
-    throw new Error('Method not implemented.');
+    return this.shortestUrlModel.countDocuments();
   }
 }

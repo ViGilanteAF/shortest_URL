@@ -8,6 +8,7 @@ import {
   ShortestUrlEntity,
   ShortestUrlSchema,
 } from './create-shortest-url/shortest-url.entity';
+import { GetShortestUrlsService } from './create-shortest-urls.service';
 import { GetOriginalUrlService } from './get-original-url.service';
 import { CreateShortestUrlUseCase } from './port/in/create-shortest-url.use-case';
 import { GetOriginalUrlUseCase } from './port/in/get-original-url.use-case';
@@ -24,7 +25,7 @@ const ports = [
 const useCase = [
   { provide: CreateShortestUrlUseCase, useClass: CreateShortestUrlService },
   { provide: GetOriginalUrlUseCase, useClass: GetOriginalUrlService },
-  { provide: GetShortestUrlsUseCase, useValue: {} },
+  { provide: GetShortestUrlsUseCase, useClass: GetShortestUrlsService },
 ];
 
 @Module({

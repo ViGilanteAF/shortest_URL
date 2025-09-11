@@ -12,4 +12,8 @@ export abstract class ShortestUrlMapper {
       .set('updatedAt', entity.updatedAt)
       .build();
   }
+
+  static entitiesToDomains(entities: ShortestUrlEntity[]): ShortestUrl[] {
+    return entities.map((entity) => ShortestUrlMapper.entityToDomain(entity));
+  }
 }
