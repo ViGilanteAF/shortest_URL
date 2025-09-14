@@ -28,13 +28,12 @@ import { RedirectOriginalUrlRequest } from './create-shortest-url/redirect-origi
 import { ShortestUrl } from './domain/shortest-url';
 import { CreateShortestUrlCommand } from './port/in/create-shortest-url-command';
 import { CreateShortestUrlUseCase } from './port/in/create-shortest-url.use-case';
-import { GetOriginalUrlQuery } from './port/in/get-original-url.query';
 import { GetOriginalUrlUseCase } from './port/in/get-original-url.use-case';
 import { GetShortestUrlsQuery } from './port/in/get-shortest-urls.query';
 import { GetShortestUrlsUseCase } from './port/in/get-shortest-urls.use-case';
 
 @ApiTags('Shortest URL API')
-@Controller()
+@Controller('shortest-urls')
 export class ShortestUrlController {
   constructor(
     private readonly createShortestUrlUseCase: CreateShortestUrlUseCase,
@@ -78,7 +77,7 @@ export class ShortestUrlController {
       },
     },
   })
-  @Post('shortest-urls')
+  @Post()
   @UseInterceptors(
     new ResponseValidationInterceptor(CreateShortestUrlKeyResponse),
   )
@@ -140,14 +139,12 @@ export class ShortestUrlController {
       },
     },
   })
-  @Get('shortest-urls/:shortestUrlKey')
+  @Get(':shortestUrlKey')
   @Redirect()
   async RedirectOriginalUrlRequest(@Param() path: RedirectOriginalUrlRequest) {
-    const query = GetOriginalUrlQuery.builder()
-      .set('shortestUrlKey', path.shortestUrlKey)
-      .build();
-
-    const originalUrl = await this.getOriginalUrlUseCase.execute(query);
+    const originalUrl = await this.getOriginalUrlUseCase.execute(
+      path.shortestUrlKey,
+    );
     return { url: originalUrl };
   }
 
@@ -190,18 +187,17 @@ export class ShortestUrlController {
       },
     },
   })
-  @Get('shortest-urls')
+  @Get()
   @UseInterceptors(
     new ResponseValidationInterceptor(CreateShortestUrlsResponse),
   )
   async getShortestUrls(
-    @Query() requestQuery: GetShortestUrlsQuery,
+    @Query() query: GetShortestUrlsQuery,
   ): Promise<{ shortestUrls: ShortestUrl[]; totalCount: number }> {
-    const query = GetShortestUrlsQuery.builder()
-      .set('pageNumber', requestQuery.pageNumber)
-      .set('pageSize', requestQuery.pageSize)
-      .build();
-    return this.getShortestUrlsUseCase.execute(query);
+    return this.getShortestUrlsUseCase.execute(
+      query.pageNumber,
+      query.pageSize,
+    );
   }
 }
 

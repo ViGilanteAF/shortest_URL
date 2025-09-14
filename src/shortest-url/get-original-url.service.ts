@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { GetOriginalUrlQuery } from './port/in/get-original-url.query';
 import { ShortestUrlCommandPort } from './port/out/shortest-url-command.port';
 import { QueryShortestUrlPort } from './port/out/shortest-url-query.port';
 
@@ -10,12 +9,12 @@ export class GetOriginalUrlService implements GetOriginalUrlService {
     private readonly shortestUrlCommandPort: ShortestUrlCommandPort,
   ) {}
 
-  async execute(query: GetOriginalUrlQuery): Promise<string> {
+  async execute(shortestUrlKey: string): Promise<string> {
     /**
      * 단축 URL 검색
      */
     const shortestUrl = await this.queryShortestUrlPort.findShortestUrlByKey(
-      query.shortestUrlKey,
+      shortestUrlKey,
     );
     if (!shortestUrl) {
       throw new NotFoundException('등록되지 않은 URL 입니다.');

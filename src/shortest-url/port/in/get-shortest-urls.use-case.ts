@@ -1,8 +1,8 @@
 import { ShortestUrl } from '../../domain/shortest-url';
-import { GetShortestUrlsQuery } from './get-shortest-urls.query';
 
 export abstract class GetShortestUrlsUseCase {
   abstract execute(
-    query: GetShortestUrlsQuery,
+    pageNumber: number,
+    pageSize: number,
   ): Promise<{ shortestUrls: ShortestUrl[]; totalCount: number }>;
 }
