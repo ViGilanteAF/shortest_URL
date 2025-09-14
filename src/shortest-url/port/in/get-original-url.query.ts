@@ -1,4 +1,4 @@
-import { Builder } from '../../../util/builder.util';
+import { Builder } from '../../../common/util/builder.util';
 
 export class GetOriginalUrlQuery {
   readonly shortestUrlKey: string;

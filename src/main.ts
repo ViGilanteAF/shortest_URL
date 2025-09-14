@@ -1,9 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
+import { winstonLogger } from './common/logging/winston';
 import { setUpSwagger } from './common/swagger/swagger';
+
 import { configServer } from './config/config';
-import { winstonLogger } from './util/winston.util';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: winstonLogger });
