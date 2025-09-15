@@ -5,7 +5,10 @@ import { CountEntity, CountSchema } from '../counter/entity/count.entity';
 import { CreateShortestUrlService } from './create-shortest-url.service';
 import { ShortestUrlAdapter } from './create-shortest-url/shortest-url-query.adapter';
 import { CountAdapter } from './create-shortest-url/shortest-url.count.adapter';
-import { ShortestUrlEntity, ShortestUrlSchema, } from './create-shortest-url/shortest-url.entity';
+import {
+  ShortestUrlEntity,
+  ShortestUrlSchema,
+} from './create-shortest-url/shortest-url.entity';
 import { GetShortestUrlsService } from './create-shortest-urls.service';
 import { GetOriginalUrlService } from './get-original-url.service';
 import { CreateShortestUrlUseCase } from './port/in/create-shortest-url.use-case';

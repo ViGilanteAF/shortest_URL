@@ -1,0 +1,103 @@
+## 워크 플로우는 작성 하나 동작은 하지 않도록 함
+## 작동을 원한다면 github폴더 앞에 . 을 붙이도록
+
+
+name: deployment
+
+on:
+  pull_request:
+    types: [ closed ]
+    braanches:
+      -main
+
+env:
+  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY}}
+  IMAGE_TAG: ${{ shortestUrl }}
+
+jobs:
+  test:
+    echo: Deployment Test
+    name: Test
+    runs-on: ubuntu-latest
+    services:
+      echo: db Test
+      db:
+        image: mongo
+        env:
+        MONGO_INITDB_DATABASE: test
+        ports:
+          - 27010:27017
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v3
+      - name: Setup node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 21.1.0
+          cache: "npm"
+          cache-dependency-path: './package-lock.json'
+        echo: running test
+      - run: npm install
+        working-directory: shortest_URL
+      - run: npm run test
+        working-directory: shortest_URL
+    build:
+      echo: Build Test
+      name: Build
+      needs: test
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout Source Code
+          uses: actions/checkout@v3
+
+        - name: Configure AWS credentials
+          echo: Configure AWS
+          uses: aws-actions/configure-aws-credentials@v1
+          with:
+            aws-access-key-id: ${{secrets.AWS_ACCESS_KEY}}
+            aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws-region: ${{secrets.AWS_REGION}}
+
+        - name: Load secrets and save to .env.production
+          echo: Load Secrets and save to env&production
+          run: AWS secretsmanager get-secret-value --secret-id ${{secrets.AWS_SECRETS_MANAGER_NAME}} --query SecretString --output test| jq -r 'to_entries|map("\(.key)=\(.value)")|.[]' > ./src/config/env/.env.production'
+
+        - name: Login to Amazon ECR
+          echo: Login to Amazon ECR
+          id: login-ecr
+          uses: aws-actions/amazon-ecr-login@v1
+
+        - name: Build & Push Image to Amazon ECR
+          echo: Build & ush Image to Amazon ECR
+          env:
+            ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry}}
+          run: |
+            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY: $IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest ./shortest_URL
+            docker push -a $ECR_REGISTRY/$ECR_REPOSITORY
+
+  deploy:
+    echo: Deploy
+    name: Deploy
+    needs: build
+    runs-on: [ self-hosted ]
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ${{ secrets.AWS_REGION}}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Pull image from Amazon ECR and restart container
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry}}
+        run: |
+          docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker container stop shortest_URL && docker container rm shortest_URL
+          docker run -d --name shortest_URL -p 8080:8080 -v /logs:/app/logs --restart unless-stopped $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker system prune -af && docker volume prune -f
+
+            
+
