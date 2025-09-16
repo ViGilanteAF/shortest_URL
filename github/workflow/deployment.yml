@@ -96,7 +96,7 @@ jobs:
         run: |
           docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker container stop shortest_URL && docker container rm shortest_URL
-          docker run -d --name shortest_URL -p 8080:8080 -v /logs:/app/logs --restart unless-stopped $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker run -d --name shortest_URL -p ${{secrets.PORT}}:${{secrets.PORT}} -v /logs:/app/logs --restart unless-stopped $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker system prune -af && docker volume prune -f
 
             
