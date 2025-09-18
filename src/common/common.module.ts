@@ -1,6 +1,7 @@
 import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { TerminusModule } from '@nestjs/terminus';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 import { Environment } from '../config/env.validation';
 import { HttpExceptionFilter } from './exception/http-exception.filter';
 import { HealthController } from './health/health.controller';

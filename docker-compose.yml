@@ -17,18 +17,56 @@ services:
 
 
   shortest-url:
-    container_name: shortest-url
+    container_name: shortest_url
     build:
-      context: ./shortest-url
+      context: ./shortest_url
       dockerfile: Dockerfile.dev
     ports:
-      - "3000:3000"
+      - "8000:8000"
     volumes:
-      - ./shortest-url:/app
+      - ./shortest_url:/app
       - /app/node_modules
     depends_on:
       - mongodb
 
+  loki:
+    image: grafana/loki
+    container_name: loki
+    volumes:
+      - ./monitoring/loki-config.yml:/etc/loki/config.yml
+    command: -config.file=/etc/loki/config.yml
+
+  promtail:
+    image: grafana/promtail
+    container_name: promtail
+    volumes:
+      - ./shortest_url/logs:/logs
+      - ./monitoring/promtail-config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+
+  prometheus:
+    image: prom/prometheus
+    user: root
+    container_name: prometheus
+    volumes:
+      - ./monitoring/prometheus-config.yml:/etc/prometheus/config.yml
+      - prometheus_data:/prometheus/data
+    command:
+      - "--web.enable-lifecycle"
+      - "--config.file=/etc/prometheus/config.yml"
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+
 volumes:
   mongodb:
-
+  prometheus_data:
+  grafana_data:
