@@ -24,3 +24,4 @@ export class ShortestUrlEntity {
 export type ShortestUrlDocument = HydratedDocument<ShortestUrlEntity>;
 export const ShortestUrlSchema =
   SchemaFactory.createForClass(ShortestUrlEntity);
+ShortestUrlSchema.index({ key: 1 }, { unique: true });
