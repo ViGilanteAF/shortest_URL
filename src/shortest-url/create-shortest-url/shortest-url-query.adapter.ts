@@ -2,14 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ShortestUrl } from '../domain/shortest-url';
-import { ShortestUrlCommandPort } from '../port/out/shortest-url-command.port';
-import { QueryShortestUrlPort } from '../port/out/shortest-url-query.port';
+import { CreateShortestUrlPort } from '../port/out/create-shortest-url.port';
+import { LoadShortestUrlPort } from '../port/out/load-shortest-url.port';
+import { UpdateShortestUrlPort } from '../port/out/update-shortest-url.port';
 import { ShortestUrlEntity } from './shortest-url.entity';
 import { ShortestUrlMapper } from './shortest-url.mapper';
 
 @Injectable()
 export class ShortestUrlAdapter
-  implements QueryShortestUrlPort, ShortestUrlCommandPort
+  implements LoadShortestUrlPort, CreateShortestUrlPort, UpdateShortestUrlPort
 {
   constructor(
     @InjectModel(ShortestUrlEntity.name)
@@ -39,15 +40,15 @@ export class ShortestUrlAdapter
     return this.shortestUrlModel.countDocuments();
   }
 
-  async save(shortestUrl: ShortestUrl): Promise<ShortestUrl> {
+  async createShortestUrl(shortestUrl: ShortestUrl): Promise<ShortestUrl> {
     const shortestUrlEntity = new this.shortestUrlModel(shortestUrl);
     await shortestUrlEntity.save();
     return ShortestUrlMapper.entityToDomain(shortestUrlEntity);
   }
 
-  async increaseVisitCount(shortestUrlId: string): Promise<void> {
+  async increaseVisitCountByKey(shortestUrlKey: string): Promise<void> {
     await this.shortestUrlModel.updateOne(
-      { _id: shortestUrlId },
+      { key: shortestUrlKey },
       { $inc: { visitCount: 1 } },
     );
   }

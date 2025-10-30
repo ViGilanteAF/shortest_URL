@@ -1,19 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ShortestUrlCommandPort } from './port/out/shortest-url-command.port';
-import { QueryShortestUrlPort } from './port/out/shortest-url-query.port';
+import { LoadShortestUrlPort } from './port/out/load-shortest-url.port';
+import { UpdateShortestUrlPort } from './port/out/update-shortest-url.port';
 
 @Injectable()
 export class GetOriginalUrlService implements GetOriginalUrlService {
   constructor(
-    private readonly queryShortestUrlPort: QueryShortestUrlPort,
-    private readonly shortestUrlCommandPort: ShortestUrlCommandPort,
+    private readonly loadShortestUrlPort: LoadShortestUrlPort,
+    private readonly updateShortestUrlPort: UpdateShortestUrlPort,
   ) {}
 
   async execute(shortestUrlKey: string): Promise<string> {
     /**
      * 단축 URL 검색
      */
-    const shortestUrl = await this.queryShortestUrlPort.findShortestUrlByKey(
+    const shortestUrl = await this.loadShortestUrlPort.findShortestUrlByKey(
       shortestUrlKey,
     );
     if (!shortestUrl) {
@@ -22,7 +22,7 @@ export class GetOriginalUrlService implements GetOriginalUrlService {
     /**
      * 단축 URL 조회 횟수 증가
      */
-    await this.shortestUrlCommandPort.increaseVisitCount(shortestUrl.id);
+    await this.updateShortestUrlPort.increaseVisitCountByKey(shortestUrl.key);
 
     return shortestUrl.originalUrl;
   }

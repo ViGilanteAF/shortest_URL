@@ -14,17 +14,19 @@ import { GetOriginalUrlService } from './get-original-url.service';
 import { CreateShortestUrlUseCase } from './port/in/create-shortest-url.use-case';
 import { GetOriginalUrlUseCase } from './port/in/get-original-url.use-case';
 import { GetShortestUrlsUseCase } from './port/in/get-shortest-urls.use-case';
-import { CountCommandPort } from './port/out/command-count.port';
+import { CreateShortestUrlPort } from './port/out/create-shortest-url.port';
 import { GetCount } from './port/out/get-count';
-import { ShortestUrlCommandPort } from './port/out/shortest-url-command.port';
-import { QueryShortestUrlPort } from './port/out/shortest-url-query.port';
+import { LoadShortestUrlPort } from './port/out/load-shortest-url.port';
+import { LoadUpdateCountPort } from './port/out/load-update-count.port';
+import { UpdateShortestUrlPort } from './port/out/update-shortest-url.port';
 import { ShortestUrlController } from './shortest-url.controller';
 
 const ports: Provider[] = [
   { provide: GetCount, useClass: CountService },
-  { provide: CountCommandPort, useClass: CountAdapter },
-  { provide: ShortestUrlCommandPort, useClass: ShortestUrlAdapter },
-  { provide: QueryShortestUrlPort, useClass: ShortestUrlAdapter },
+  { provide: LoadUpdateCountPort, useClass: CountAdapter },
+  { provide: CreateShortestUrlPort, useClass: ShortestUrlAdapter },
+  { provide: LoadShortestUrlPort, useClass: ShortestUrlAdapter },
+  { provide: UpdateShortestUrlPort, useClass: ShortestUrlAdapter },
 ];
 
 const useCase: Provider[] = [
