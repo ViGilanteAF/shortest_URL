@@ -1,5 +1,11 @@
 import { plainToInstance } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsNumber, validateSync } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsNumberString,
+  validateSync,
+} from 'class-validator';
 
 export enum Environment {
   Development = 'development',
@@ -16,6 +22,9 @@ class EnvironmentVariables {
 
   @IsNotEmpty()
   MONGODB_URI: string;
+
+  @IsNumberString()
+  CACHE_TTL: string;
 }
 
 export const validate = (config: Record<string, unknown>) => {

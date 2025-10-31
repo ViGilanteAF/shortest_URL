@@ -1,8 +1,9 @@
+import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
-import { CacheModule } from '@nestjs/common/cache';
 import { ConfigModule as NestConfigModule, ConfigType } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { validate } from 'class-validator';
+import { cacheConfig } from './cache.Config';
 import { configServer } from './config';
 import { configDatabase } from './configDatabase';
 
@@ -11,7 +12,7 @@ import { configDatabase } from './configDatabase';
     NestConfigModule.forRoot({
       envFilePath: `${__dirname}/env/.env.${process.env.NODE_ENV}`,
       validate: validate,
-      load: [configServer, configDatabase],
+      load: [configServer, configDatabase, cacheConfig],
       isGlobal: true,
     }),
     MongooseModule.forRootAsync({
@@ -21,6 +22,7 @@ import { configDatabase } from './configDatabase';
     CacheModule.registerAsync({
       inject: [cacheConfig.KEY],
       useFactory: (config: ConfigType<typeof cacheConfig>) => config,
+      isGlobal: true,
     }),
   ],
 })
