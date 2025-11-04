@@ -15,6 +15,14 @@ services:
       - ./mongodb/initdb.d:/docker-entrypoint-initdb.d:ro
       - mongodb:/data/db
 
+  az:
+    image: redis
+    container_name: az
+    volumes:
+      - az_data:/data
+      - ./az/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+
 
   shortest-url:
     container_name: shortest_url
@@ -28,6 +36,19 @@ services:
       - /app/node_modules
     depends_on:
       - mongodb
+
+  #  was:
+  #    container_name: was
+  #    build:
+  #      context: ./was
+  #      dockerfile: Dockerfile.development
+  #    ports:
+  #      - 8000:8000
+  #    volumes:
+  #      - ./was:/app
+  #      - /app/node_modules
+  #    depends_on:
+  #      - mongodb
 
   loki:
     image: grafana/loki
@@ -68,5 +89,6 @@ services:
 
 volumes:
   mongodb:
+  az_data:
   prometheus_data:
   grafana_data:
