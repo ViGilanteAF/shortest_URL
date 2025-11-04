@@ -20,6 +20,9 @@ export class GetOriginalUrlService implements GetOriginalUrlService {
     const shortestUrl =
       await this.loadShortestUrlCachePort.findShortestUrlCache(shortestUrlKey);
     if (shortestUrl) {
+      console.log('Cache!!');
+    }
+    if (!shortestUrl) {
       /**
        * DB 검색
        */
