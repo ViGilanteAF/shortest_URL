@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CountService } from '../counter/count.service';
 import { CountEntity, CountSchema } from '../counter/entity/count.entity';
 import { CreateShortestUrlService } from './create-shortest-url.service';
+import { ShortestUrlCacheAdapter } from './create-shortest-url/shortest-url-cache.adapter';
 import { ShortestUrlAdapter } from './create-shortest-url/shortest-url-query.adapter';
 import { CountAdapter } from './create-shortest-url/shortest-url.count.adapter';
 import {
@@ -16,6 +17,7 @@ import { GetOriginalUrlUseCase } from './port/in/get-original-url.use-case';
 import { GetShortestUrlsUseCase } from './port/in/get-shortest-urls.use-case';
 import { CreateShortestUrlPort } from './port/out/create-shortest-url.port';
 import { GetCount } from './port/out/get-count';
+import { LoadShortestUrlCachePort } from './port/out/load-shortest-url-cache.port';
 import { LoadShortestUrlPort } from './port/out/load-shortest-url.port';
 import { LoadUpdateCountPort } from './port/out/load-update-count.port';
 import { UpdateShortestUrlPort } from './port/out/update-shortest-url.port';
@@ -25,8 +27,10 @@ const ports: Provider[] = [
   { provide: GetCount, useClass: CountService },
   { provide: LoadUpdateCountPort, useClass: CountAdapter },
   { provide: CreateShortestUrlPort, useClass: ShortestUrlAdapter },
-  { provide: LoadShortestUrlPort, useClass: ShortestUrlAdapter },
+  { provide: LoadShortestUrlCachePort, useClass: ShortestUrlCacheAdapter },
+  { provide: CreateShortestUrlUseCase, useClass: ShortestUrlCacheAdapter },
   { provide: UpdateShortestUrlPort, useClass: ShortestUrlAdapter },
+  { provide: LoadShortestUrlPort, useClass: ShortestUrlAdapter },
 ];
 
 const useCase: Provider[] = [
