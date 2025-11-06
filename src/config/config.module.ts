@@ -1,8 +1,10 @@
+import { BullModule } from '@nestjs/bull';
 import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule as NestConfigModule, ConfigType } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { validate } from 'class-validator';
+import { azConfig } from './az.config';
 import { cacheConfig } from './cache.Config';
 import { configServer } from './config';
 import { configDatabase } from './configDatabase';
@@ -12,7 +14,7 @@ import { configDatabase } from './configDatabase';
     NestConfigModule.forRoot({
       envFilePath: `${__dirname}/env/.env.${process.env.NODE_ENV}`,
       validate: validate,
-      load: [configServer, configDatabase, cacheConfig],
+      load: [configServer, configDatabase, cacheConfig, azConfig],
       isGlobal: true,
     }),
     MongooseModule.forRootAsync({
@@ -23,6 +25,10 @@ import { configDatabase } from './configDatabase';
       inject: [cacheConfig.KEY],
       useFactory: (config: ConfigType<typeof cacheConfig>) => config,
       isGlobal: true,
+    }),
+    BullModule.forRootAsync({
+      inject: [azConfig.KEY],
+      useFactory: (config: ConfigType<typeof azConfig>) => config,
     }),
   ],
 })

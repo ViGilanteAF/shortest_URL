@@ -4,13 +4,16 @@ import { Model } from 'mongoose';
 import { ShortestUrl } from '../domain/shortest-url';
 import { CreateShortestUrlPort } from '../port/out/create-shortest-url.port';
 import { LoadShortestUrlPort } from '../port/out/load-shortest-url.port';
-import { UpdateShortestUrlPort } from '../port/out/update-shortest-url.port';
 import { ShortestUrlEntity } from './shortest-url.entity';
 import { ShortestUrlMapper } from './shortest-url.mapper';
 
+export abstract class ShortestUrlRepository {
+  abstract increaseVisitCountByKey(shortestUrlKey: string): Promise<void>;
+}
+
 @Injectable()
 export class ShortestUrlAdapter
-  implements LoadShortestUrlPort, CreateShortestUrlPort, UpdateShortestUrlPort
+  implements LoadShortestUrlPort, CreateShortestUrlPort, ShortestUrlRepository
 {
   constructor(
     @InjectModel(ShortestUrlEntity.name)

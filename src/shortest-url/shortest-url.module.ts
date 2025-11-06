@@ -1,10 +1,15 @@
+import { BullModule } from '@nestjs/bull';
 import { Module, Provider } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CountService } from '../counter/count.service';
 import { CountEntity, CountSchema } from '../counter/entity/count.entity';
 import { CreateShortestUrlService } from './create-shortest-url.service';
 import { ShortestUrlCacheAdapter } from './create-shortest-url/shortest-url-cache.adapter';
-import { ShortestUrlAdapter } from './create-shortest-url/shortest-url-query.adapter';
+import {
+  ShortestUrlAdapter,
+  ShortestUrlRepository,
+} from './create-shortest-url/shortest-url-query.adapter';
+import { ShortestUrlConsumer } from './create-shortest-url/shortest-url.consumer';
 import { CountAdapter } from './create-shortest-url/shortest-url.count.adapter';
 import {
   ShortestUrlEntity,
@@ -45,8 +50,14 @@ const useCase: Provider[] = [
       { name: ShortestUrlEntity.name, schema: ShortestUrlSchema },
       { name: CountEntity.name, schema: CountSchema },
     ]),
+    BullModule.registerQueue({ name: 'shortestUrlQueue' }),
   ],
   controllers: [ShortestUrlController],
-  providers: [...useCase, ...ports],
+  providers: [
+    { provide: ShortestUrlRepository, useClass: ShortestUrlAdapter },
+    ShortestUrlConsumer,
+    ...useCase,
+    ...ports,
+  ],
 })
 export class ShortestUrlModule {}
