@@ -23,6 +23,10 @@ services:
       - ./az/redis.conf:/usr/local/etc/redis/redis.conf
     command: redis-server /usr/local/etc/redis/redis.conf
 
+  cache:
+    image: redis
+    container_name: cache
+    command: redis-server --requirepass dev_password
 
   shortest-url:
     container_name: shortest_url
@@ -37,18 +41,21 @@ services:
     depends_on:
       - mongodb
 
-  #  was:
-  #    container_name: was
-  #    build:
-  #      context: ./was
-  #      dockerfile: Dockerfile.development
-  #    ports:
-  #      - 8000:8000
-  #    volumes:
-  #      - ./was:/app
-  #      - /app/node_modules
-  #    depends_on:
-  #      - mongodb
+  #    was:
+  #      container_name: was
+  #      build:
+  #        context: ./was
+  #        dockerfile: Dockerfile.development
+  #      ports:
+  #        - 8000:8000
+  #      volumes:
+  #        - ./was:/app
+  #        - /app/node_modules
+  #      depends_on:
+  #        - mongodb
+  #        - az
+  #        - cache
+
 
   loki:
     image: grafana/loki
