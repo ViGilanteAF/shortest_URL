@@ -28,8 +28,10 @@ class EnvironmentVariables {
 
   @IsNotEmpty()
   REDIS_AZ_HOST: string;
+
   @IsNumberString()
   REDIS_AZ_PORT: string;
+
   @IsNotEmpty()
   REDIS_AZ_PASSWORD: string;
 }
