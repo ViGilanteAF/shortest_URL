@@ -20,7 +20,11 @@ export class MetricMiddleware implements NestMiddleware {
     response.on('finish', () => {
       const responseTime = Date.now() - startTime;
       this.httpRequestHistogream
-        .labels(request.method, request.url, response.status.toString())
+        .labels(
+          request.method,
+          request.route.path,
+          response.statusCode.toString(),
+        )
         .observe(responseTime);
     });
     next();
