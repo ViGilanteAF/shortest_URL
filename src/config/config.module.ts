@@ -5,7 +5,7 @@ import { ConfigModule as NestConfigModule, ConfigType } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { validate } from 'class-validator';
 import { azConfig } from './az.config';
-import { cacheConfig } from './cache.Config';
+import { cacheConfig } from './cache.config';
 import { configServer } from './config';
 import { configDatabase } from './configDatabase';
 

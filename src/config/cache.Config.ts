@@ -1,5 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import { redisStore } from 'cache-manager-redis-store';
+import { RedisClientOptions } from 'redis';
 
 export const cacheConfig = registerAs(
   'cache',
