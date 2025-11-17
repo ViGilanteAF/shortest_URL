@@ -11,6 +11,11 @@ export class ShortestUrlProducer implements UpdateShortestUrlPort {
   ) {}
 
   async increaseVisitCountByKey(shortestUrlKey: string): Promise<void> {
-    await this.shortestUrlQueue.add('increaseVisitCountByKey', shortestUrlKey);
+    await this.shortestUrlQueue.add('increaseVisitCountByKey', shortestUrlKey, {
+      attempts: 3,
+      backoff: { type: 'exponential', delay: 1000 },
+      removeOnComplete: true,
+      removeOnFail: true,
+    });
   }
 }
