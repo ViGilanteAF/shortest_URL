@@ -22,7 +22,7 @@ export class CountAdapter implements LoadUpdateCountPort {
   ) {}
 
   async findCountIncrease(): Promise<number> {
-    const releas = await this.mutex.acquire();
+    await this.mutex.acquire();
     try {
       if (this.count.current === this.count.end) {
         await this.setCount();
@@ -30,7 +30,7 @@ export class CountAdapter implements LoadUpdateCountPort {
         this.count.current++;
       }
     } finally {
-      releas();
+      this.mutex.releas();
     }
 
     return this.count.current;
