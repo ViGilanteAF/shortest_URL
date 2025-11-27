@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Mutex } from 'async-mutex';
 import { Model } from 'mongoose';
 
 import { CountEntity } from '../../counter/entity/count.entity';
@@ -30,7 +31,7 @@ export class CountAdapter implements LoadUpdateCountPort {
         this.count.current++;
       }
     } finally {
-      this.mutex.releas();
+      this.mutex.release();
     }
 
     return this.count.current;

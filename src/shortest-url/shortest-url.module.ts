@@ -1,14 +1,22 @@
 import { BullModule } from '@nestjs/bull';
-import { Module, Provider } from '@nestjs/common';
+import { Logger, Module, Provider } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CountService } from '../counter/count.service';
 import { CountEntity, CountSchema } from '../counter/entity/count.entity';
 import { CreateShortestUrlService } from './create-shortest-url.service';
+import {
+  MessageEntity,
+  MessageSchema,
+} from './create-shortest-url/entity/message.entity';
+import {
+  MessageAdapter,
+  MessageRepository,
+} from './create-shortest-url/message.adapter';
 import { ShortestUrlCacheAdapter } from './create-shortest-url/shortest-url-cache.adapter';
 import {
   ShortestUrlAdapter,
   ShortestUrlRepository,
-} from './create-shortest-url/shortest-url-query.adapter';
+} from './create-shortest-url/shortest-url-query.repository';
 import { ShortestUrlConsumer } from './create-shortest-url/shortest-url.consumer';
 import { CountAdapter } from './create-shortest-url/shortest-url.count.adapter';
 import {
@@ -27,6 +35,11 @@ import { LoadShortestUrlPort } from './port/out/load-shortest-url.port';
 import { LoadUpdateCountPort } from './port/out/load-update-count.port';
 import { UpdateShortestUrlPort } from './port/out/update-shortest-url.port';
 import { ShortestUrlController } from './shortest-url.controller';
+
+const repositories: Provider[] = [
+  { provide: MessageRepository, useClass: MessageAdapter },
+  { provide: ShortestUrlRepository, useClass: ShortestUrlAdapter },
+];
 
 const ports: Provider[] = [
   { provide: GetCount, useClass: CountService },
@@ -49,15 +62,18 @@ const useCase: Provider[] = [
     MongooseModule.forFeature([
       { name: ShortestUrlEntity.name, schema: ShortestUrlSchema },
       { name: CountEntity.name, schema: CountSchema },
+      { name: MessageEntity.name, schema: MessageSchema },
     ]),
     BullModule.registerQueue({ name: 'shortestUrlQueue' }),
+    BullModule.registerQueue({ name: 'deadLetterQueue' }),
   ],
   controllers: [ShortestUrlController],
   providers: [
-    { provide: ShortestUrlRepository, useClass: ShortestUrlAdapter },
-    ShortestUrlConsumer,
+    ...repositories,
     ...useCase,
     ...ports,
+    Logger,
+    ShortestUrlConsumer,
   ],
 })
 export class ShortestUrlModule {}
