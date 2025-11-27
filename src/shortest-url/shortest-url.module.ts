@@ -16,7 +16,7 @@ import { ShortestUrlCacheAdapter } from './create-shortest-url/shortest-url-cach
 import {
   ShortestUrlAdapter,
   ShortestUrlRepository,
-} from './create-shortest-url/shortest-url-query.repository';
+} from './create-shortest-url/shortest-url-query.adapter';
 import { ShortestUrlConsumer } from './create-shortest-url/shortest-url.consumer';
 import { CountAdapter } from './create-shortest-url/shortest-url.count.adapter';
 import {

@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 import { Job, Queue } from 'bull';
 import { Consumer } from '../../common/util/consumer.util';
 import { MessageRepository } from './message.adapter';
-import { ShortestUrlRepository } from './shortest-url-query.repository';
+import { ShortestUrlRepository } from './shortest-url-query.adapter';
 
 @Processor('shortestUrlQueue')
 export class ShortestUrlConsumer extends Consumer {
