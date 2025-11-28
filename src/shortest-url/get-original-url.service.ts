@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { GetOriginalUrlUseCase } from './port/in/get-original-url.use-case';
 import { CreateShortestUrlCachePort } from './port/out/create-shortest-url-cache.port';
 import { LoadShortestUrlCachePort } from './port/out/load-shortest-url-cache.port';
 import { LoadShortestUrlPort } from './port/out/load-shortest-url.port';
 import { UpdateShortestUrlPort } from './port/out/update-shortest-url.port';
 
 @Injectable()
-export class GetOriginalUrlService implements GetOriginalUrlService {
+export class GetOriginalUrlServiceImpl implements GetOriginalUrlUseCase {
   constructor(
     private readonly loadShortestUrlPort: LoadShortestUrlPort,
     private readonly updateShortestUrlPort: UpdateShortestUrlPort,

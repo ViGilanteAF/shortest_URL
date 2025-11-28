@@ -6,7 +6,7 @@ import { CreateShortestUrlCachePort } from '../port/out/create-shortest-url-cach
 import { LoadShortestUrlCachePort } from '../port/out/load-shortest-url-cache.port';
 
 @Injectable()
-export class ShortestUrlCacheAdapter
+export class ShortestUrlCacheRepositoryImpl
   implements LoadShortestUrlCachePort, CreateShortestUrlCachePort
 {
   constructor(@Inject(CACHE_MANAGER) private readonly cacheManage: Cache) {}

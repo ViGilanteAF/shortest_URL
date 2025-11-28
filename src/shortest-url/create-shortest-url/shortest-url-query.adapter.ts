@@ -12,7 +12,7 @@ export abstract class ShortestUrlRepository {
 }
 
 @Injectable()
-export class ShortestUrlAdapter
+export class ShortestUrlRepositoryImpl
   implements LoadShortestUrlPort, CreateShortestUrlPort, ShortestUrlRepository
 {
   constructor(

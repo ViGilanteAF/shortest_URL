@@ -4,7 +4,7 @@ import { GetShortestUrlsUseCase } from './port/in/get-shortest-urls.use-case';
 import { LoadShortestUrlPort } from './port/out/load-shortest-url.port';
 
 @Injectable()
-export class GetShortestUrlsService implements GetShortestUrlsUseCase {
+export class GetShortestUrlsServiceImpl implements GetShortestUrlsUseCase {
   constructor(private readonly loadShortestUrlPort: LoadShortestUrlPort) {}
 
   async execute(
