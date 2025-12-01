@@ -1,21 +1,21 @@
-import { InjectQueue, Process, Processor } from '@nestjs/bull';
-import { Logger } from '@nestjs/common';
-import { Job, Queue } from 'bull';
-import { Consumer } from '../../common/util/consumer.util';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { ConsumerService } from '../../kafka/consumer.service';
 import { ShortestUrlRepository } from './shortest-url-query.adapter';
 
-@Processor('shortestUrlQueue')
-export class ShortestUrlConsumer extends Consumer {
+@Injectable()
+export class ShortestUrlConsumer implements OnModuleInit {
   constructor(
-    protected readonly logger: Logger,
-    @InjectQueue('deadLetterQueue') protected readonly deadLetterQueue: Queue,
+    private readonly consumerService: ConsumerService,
     private readonly shortestUrlRepository: ShortestUrlRepository,
-  ) {
-    super(logger, deadLetterQueue);
-  }
+  ) {}
 
-  @Process('increaseVisitCountByKey')
-  async increaseVisitCountByKey(job: Job): Promise<void> {
-    await this.shortestUrlRepository.increaseVisitCountByKey(job.data);
+  async onModuleInit(): Promise<void> {
+    await this.consumerService.subscribe('increaseVisitCountByKey', {
+      eachMessage: async ({ message }) => {
+        await this.shortestUrlRepository.increaseVisitCountByKey(
+          message.value?.toString(),
+        );
+      },
+    });
   }
 }

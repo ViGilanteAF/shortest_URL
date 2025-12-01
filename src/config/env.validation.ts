@@ -23,8 +23,14 @@ class EnvironmentVariables {
   @IsNotEmpty()
   MONGODB_URI: string;
 
+  @IsNotEmpty()
+  REDIS_URL: string;
+
   @IsNumberString()
   CACHE_TTL: string;
+
+  @IsNotEmpty()
+  KAFKA_BROKERS: string;
 
   @IsNotEmpty()
   REDIS_AZ_HOST: string;

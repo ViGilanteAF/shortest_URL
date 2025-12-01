@@ -1,4 +1,3 @@
-import { BullModule } from '@nestjs/bull';
 import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule as NestConfigModule, ConfigType } from '@nestjs/config';
@@ -25,10 +24,6 @@ import { configDatabase } from './configDatabase';
       inject: [cacheConfig.KEY],
       useFactory: (config: ConfigType<typeof cacheConfig>) => config,
       isGlobal: true,
-    }),
-    BullModule.forRootAsync({
-      inject: [azConfig.KEY],
-      useFactory: (config: ConfigType<typeof azConfig>) => config,
     }),
   ],
 })

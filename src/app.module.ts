@@ -5,6 +5,7 @@ import { CommonModule } from './common/common.module';
 import { HealthModule } from './common/health/health.module';
 import { ConfigModule } from './config/config.module';
 import { CounterModule } from './counter/counter.module';
+import { KafkaModule } from './kafka/kafka.module';
 import { ShortestUrlController } from './shortest-url/shortest-url.controller';
 import { ShortestUrlModule } from './shortest-url/shortest-url.module';
 
@@ -15,6 +16,7 @@ import { ShortestUrlModule } from './shortest-url/shortest-url.module';
     HealthModule,
     CounterModule,
     ShortestUrlModule,
+    KafkaModule,
   ],
   controllers: [AppController, ShortestUrlController],
   providers: [AppService],

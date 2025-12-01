@@ -15,6 +15,30 @@ services:
       - ./mongodb/initdb.d:/docker-entrypoint-initdb.d:ro
       - mongodb:/data/db
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
+
+  kafka:
+    image: confluentinc/cp-kafka
+    container_name: kafka
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLANTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    depends_on:
+      - zookeeper
+
   az:
     image: redis
     container_name: az
@@ -23,11 +47,11 @@ services:
       - ./az/redis.conf:/usr/local/etc/redis/redis.conf
     command: redis-server /usr/local/etc/redis/redis.conf
 
-  cache:
+  redis:
     image: redis
-    container_name: cache
+    container_name: redis
     volumes:
-      - ./cache/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./cache/redis/redis.conf:/usr/local/etc/redis/redis.conf
     command: redis-server /usr/local/etc/redis/redis.conf
 
   shortest-url:
@@ -42,6 +66,8 @@ services:
       - /app/node_modules
     depends_on:
       - mongodb
+      - kafka
+      - redis
 
   #    was:
   #      container_name: was
@@ -98,6 +124,6 @@ services:
 
 volumes:
   mongodb:
-  az_data:
-  prometheus_data:
-  grafana_data:
+#  az_data:
+#  prometheus_data:
+#  grafana_data:

@@ -1,8 +1,8 @@
-import { BullModule } from '@nestjs/bull';
-import { Logger, Module, Provider } from '@nestjs/common';
+import { Module, Provider } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CountService } from '../counter/count.service';
 import { CountEntity, CountSchema } from '../counter/entity/count.entity';
+import { KafkaModule } from '../kafka/kafka.module';
 import { CountServiceImpl } from './count.service';
 import { CreateShortestUrlServiceImpl } from './create-shortest-url.service';
 import {
@@ -72,8 +72,7 @@ const useCase: Provider[] = [
       { name: CountEntity.name, schema: CountSchema },
       { name: MessageEntity.name, schema: MessageSchema },
     ]),
-    BullModule.registerQueue({ name: 'shortestUrlQueue' }),
-    BullModule.registerQueue({ name: 'deadLetterQueue' }),
+    KafkaModule,
   ],
   controllers: [ShortestUrlController],
   providers: [
@@ -81,7 +80,6 @@ const useCase: Provider[] = [
     ...services,
     ...useCase,
     ...ports,
-    Logger,
     ShortestUrlConsumer,
   ],
 })
