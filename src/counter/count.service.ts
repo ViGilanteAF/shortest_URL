@@ -1,12 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import { CreateShortestUrlUseCase } from '../shortest-url/port/in/create-shortest-url.use-case';
+import { Mutex } from '../common/util/mutex.util';
+import { Count } from '../shortest-url/domain/count';
 import { LoadUpdateCountPort } from '../shortest-url/port/out/load-update-count.port';
 
+export abstract class CountService {
+  static readonly COUNT_RANGE = 10000;
+
+  abstract getCurrentCount(): Promise<number>;
+}
+
 @Injectable()
-export class CountService implements CreateShortestUrlUseCase {
+export class CountServiceImpl implements CountService {
+  private mutex = new Mutex();
+  private readonly count = new Count();
+
   constructor(private readonly loadUpdateCountPort: LoadUpdateCountPort) {}
 
-  execute(): Promise<number> {
-    return this.loadUpdateCountPort.findCountIncrease();
+  async getCurrentCount(): Promise<number> {
+    await this.mutex.acquire();
+    try {
+      if (this.count.isFinished()) {
+        const start = await this.loadUpdateCountPort.findCountIncrease(
+          CountService.COUNT_RANGE,
+        );
+        this.count.setCount(start);
+      } else {
+        this.count.increaseCurrentCount();
+      }
+    } finally {
+      this.mutex.release();
+    }
+    return this.count.current;
   }
 }
