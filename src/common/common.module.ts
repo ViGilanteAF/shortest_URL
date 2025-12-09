@@ -7,6 +7,8 @@ import { HttpExceptionFilter } from './exception/http-exception.filter';
 import { HealthController } from './health/health.controller';
 import { HealthModule } from './health/health.module';
 import { LoggingInterceptor } from './logging/logging';
+import { LoggingMiddleware } from './logging/logging.middleware';
+import { MetricMiddleware } from './metric/middleware.metric';
 import { RequestValidationPipe } from './validation/request-validation';
 
 @Module({
@@ -21,7 +23,7 @@ import { RequestValidationPipe } from './validation/request-validation';
 })
 export class CommonModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {
-    if (process.env.NODE_ENV != Environment.Test) {
+    if (process.env.NODE_ENV != Environment.Testing) {
       consumer.apply(LoggingMiddleware).forRoutes('*');
       consumer.apply(MetricMiddleware).exclude('/metrics').forRoutes('*');
     }
