@@ -1,73 +1,211 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 🔗 Shortest URL Service
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+NestJS와 MongoDB 기반의 **URL 단축 서비스** 입니다.  
+긴 URL을 짧은 URL로 변환하고, 접속 시 원본 URL로 리다이렉트하며  
+방문 횟수(`visitCount`)를 추적합니다.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+본 프로젝트는 기능 구현뿐 아니라  
+**Port / Adapter 패턴을 적용한 아키텍처 설계와 도메인 분리** 에 중점을 두었습니다.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🧭 프로젝트 개요
 
-## Installation
+- 긴 URL을 짧은 URL로 변환
+- 단축 URL 접속 시 원본 URL로 리다이렉트
+- 접속 횟수 자동 집계
+- 도메인 중심 설계 + 인프라 의존성 최소화
 
-```bash
-$ npm install
+> 개인 학습 프로젝트로,  
+> **유지보수성과 확장성을 고려한 백엔드 구조 설계**를 목표로 개발했습니다.
+
+---
+
+## 🛠 기술 스택
+
+### Backend
+
+- **Node.js**
+- **NestJS**
+- **TypeScript**
+
+### Database
+
+- **MongoDB**
+- **Mongoose ODM**
+
+### Architecture
+
+- **Port / Adapter 패턴 (Hexagonal Architecture)**
+- **Domain 중심 설계**
+- **Repository Pattern**
+- **Entity ↔ Domain Mapper**
+
+### Etc
+
+- **RESTful API**
+- **Git / GitHub**
+
+---
+
+## 🏗 시스템 아키텍처
+
+```
+Client
+  │
+  ▼
+Controller (API Layer)
+  │
+  ▼
+Application Service
+  │
+  ▼
+Port (Interface)
+  │
+  ▼
+Repository Adapter ◀───▶ Entity ◀─▶ Domain Mapper
+  │
+  ▼
+MongoDB
 ```
 
-## Running the app
+### 설계 포인트
 
-```bash
-# development
-$ npm run start
+- Service 계층은 DB 구현체를 알지 않음
+- Port를 통해 의존성 역전(DIP) 적용
+- Repository Adapter 교체 가능
+- Domain 로직이 Mongoose에 의존하지 않도록 분리
 
-# watch mode
-$ npm run start:dev
+---
 
-# production mode
-$ npm run start:prod
+## 🗄 ERD
+
+SHORTEST_URL
+
+_id &emsp; ObjectId(PK)   
+key &emsp; string(unique)   
+originalUrl &emsp; string  
+visitCount &emsp; number  
+createdAt &emsp; Date  
+updatedAt &emsp; Date
+
+### 컬럼 설명
+
+- **key**: 단축 URL 식별자 (Unique)
+- **originalUrl**: 리다이렉트 대상 URL
+- **visitCount**: 접근 횟수 (MongoDB `$inc` 사용)
+- **timestamps**: 생성 / 수정 시간 자동 관리
+
+---
+
+## 🔗 API 명세
+
+### 1️⃣ 단축 URL 생성
+
+**POST** `/shortest-url`
+
+```json
+{
+  "originalUrl": "https://sample.com"
+}
 ```
 
-## Test
+**Response**
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+```json
+{
+  "key": "a1b2c",
+  "originalUrl": "https://sample.com",
+  "shortUrl": "https://a1b2c"
+}
 ```
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### 2️⃣ 단축 URL 접속
 
-## Stay in touch
+**GET /:key**
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- 원본 URL 조회
+- visitCount 증가
+- 301 Redirect
 
-## License
+---
 
-Nest is [MIT licensed](LICENSE).
+### 3️⃣ 단축 URL 목록 조회
+
+**GET /shortest-url?page=&size=
+
+```json
+[
+  {
+    "key": "a1b2c",
+    "originalUrl": "https://sample.com",
+    "visitCount": 12
+  }
+]
+```
+
+---
+
+## ⭐ 핵심 기능
+
+- URL 단축 생성
+- Key 기반 조회
+- 원본 URL 리다이렉트
+- 방문 수 추적 (visitCount)
+- 페이징 기반 목록 조회
+- Entity ↔ Domain 변환 구조
+- Port / Adapter 기반 Repository 분리
+
+---
+
+## 📂 프로젝트 구조
+
+```
+src/
+├─ domain/
+│ └─ shortest-url.ts
+├─ port/
+│ └─ out/
+│ ├─ load-shortest-url.port.ts
+│ └─ create-shortest-url.port.ts
+├─ adapter/
+│ ├─ shortest-url.repository.ts
+│ ├─ shortest-url.entity.ts
+│ └─ shortest-url.mapper.ts
+└─ ...
+```
+
+**구조 설명**
+
+- Domain: 비즈니스 규칙
+- Port: 외부 의존성 추상화
+- Adapter: MongoDB/Mongoose 접근 책임
+
+---
+
+## 🚀 실행 방법
+
+```shell
+npm install
+npm run start:dev
+```
+
+> **MongoDB는 외부 인스턴스(AWS)를 사용합니다.**
+
+---
+
+## 🧩 확장 계획
+
+- 사용자 인증 기반 URL 관리
+- Redis 캐싱 도입
+- 클릭 통계 및 대시보드
+- 이벤트 기반처리(Kafka 등) 확장기능 추가
+
+---
+
+## ✍️ 회고
+
+ShortestURL 프로젝트를 통해 **"작은 서비스라도 구조가 곧 품질이다"** 라는 것을 체감하고
+도메인 중심 설계와 Port/Adapter 패턴을 적용하면서 기능 추가 보다 유지보수성과 확장성을 먼저 고민하는 개발습관을 기를 수 있었다.
