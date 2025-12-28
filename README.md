@@ -134,7 +134,7 @@ updatedAt &emsp; Date
 
 ### 3️⃣ 단축 URL 목록 조회
 
-**GET /shortest-url?page=&size=
+**GET /shortest-url?page=&size=**
 
 ```json
 [
