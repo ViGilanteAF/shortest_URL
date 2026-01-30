@@ -1,6 +1,6 @@
 # 🔗 Shortest URL Service
 
-NestJS와 MongoDB 기반의 **URL 단축 서비스** 입니다.  
+Terraform + ECS Fargate 기반의 NestJS를 이용하여 만들어진 **URL 단축 서비스** 입니다.  
 긴 URL을 짧은 URL로 변환하고, 접속 시 원본 URL로 리다이렉트하며  
 방문 횟수(`visitCount`)를 추적합니다.
 
@@ -22,6 +22,11 @@ NestJS와 MongoDB 기반의 **URL 단축 서비스** 입니다.
 ---
 
 ## 🛠 기술 스택
+
+### Infrastructure
+
+- **Terraform**
+- **AWS**
 
 ### Backend
 
@@ -45,6 +50,65 @@ NestJS와 MongoDB 기반의 **URL 단축 서비스** 입니다.
 
 - **RESTful API**
 - **Git / GitHub**
+
+---
+
+## ⛏️ 인프라 아키텍처
+
+```
+Client
+  │
+  ▼
+Application Load Balancer (Http: 80)
+  │
+  ▼
+Ecs Service (Fargate)
+  │
+  ▼
+NestJS Container (:8000)
+
+```
+
+- Terraform을 사용하여 AWS를 IaC하였으며, NestJS는 ECS Fargate기반 컨테이너 환경에서 실행됩니다.
+
+---
+
+### Why ECS Fargate?
+
+- EC2 인스턴스 직접 생성 및 운영 불필요
+- CPU / Memory 단위 리소스 설정
+- 컨테이너 단위 과금
+- Auto Scaling 연동 가능
+
+---
+
+### Terraform 구성
+
+```
+terraform/
+ ├── provider.tf    # AWS Provider
+ ├── vpc.tf         # VPC / Subnet / IGW
+ ├── alb.tf         # Application Load Balancer
+ ├── ecs.tf         # ECS Cluster / Task / Service (Fargate)
+ ├── iam.tf         # ECS Task Execution Role
+ └── outputs.tf     # ALB DNS 출력
+```
+
+- 기능 단위 파일 분리
+
+---
+
+### ECS Task Definition
+
+```hcl
+requires_compatibilities = ["FARGATE"]
+network_mode = "awsvpc"
+cpu          = "256"
+memory       = "512"
+```
+
+- NestJS는 Docker 이미지 기반으로 실행
+- ALB를 통해 외부 트래픽을 수신
 
 ---
 
@@ -185,17 +249,6 @@ src/
 
 ---
 
-## 🚀 실행 방법
-
-```shell
-npm install
-npm run start:dev
-```
-
-> **MongoDB는 외부 인스턴스(AWS)를 사용합니다.**
-
----
-
 ## 🧩 확장 계획
 
 - 사용자 인증 기반 URL 관리
@@ -205,7 +258,9 @@ npm run start:dev
 
 ---
 
-## ✍️ 회고
+## ✍️ Summary
 
-ShortestURL 프로젝트를 통해 **"작은 서비스라도 구조가 곧 품질이다"** 라는 것을 체감하고
-도메인 중심 설계와 Port/Adapter 패턴을 적용하면서 기능 추가 보다 유지보수성과 확장성을 먼저 고민하는 개발습관을 기를 수 있었다.
+NestJS 기반 URL단축 서비스를 구현하는 것을 넘어, Terraform을 활용한 IaC 구성과 ECS Fargate 기반 컨테이너 배포 환경을 구출하며 실제 운영 환경을 가정한 백엔드 서비스 아키텍처를
+설계했습니다.
+도메인 중심 설계와 Port/Adapter 패턴을 통해 인프라 및 데이터 계층과의 결합도를 낮추었고, 컨테이너 기반 배포 구조를 적용하여 확장성과 유지보수성을 고려한 시스템을 구현했습니다.
+이를 통해 단순 기능 구현이 아닌, **서비스 관점에서의 백엔드 설계와 DevOps 기본 역량을 함께 검증하는 프로젝트**를 목표로 했습니다.
