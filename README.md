@@ -1,7 +1,8 @@
 # 🔗 Shortest URL Service
 
-Terraform + ECS Fargate 기반의 NestJS를 이용하여 만들어진 **URL 단축 서비스** 입니다.  
-긴 URL을 짧은 URL로 변환하고, 접속 시 원본 URL로 리다이렉트하며  
+Terraform + ECS Fargate 기반으로 NestJS 서비스를 배포했습니다.
+
+**URL단축 서비스**는 긴 URL을 짧은 URL로 변환하고, 접속 시 원본 URL로 리다이렉트하며  
 방문 횟수(`visitCount`)를 추적합니다.
 
 본 프로젝트는 기능 구현뿐 아니라  
