@@ -18,8 +18,9 @@ export class GetOriginalUrlServiceImpl implements GetOriginalUrlUseCase {
     /**
      * 단축 URL 검색
      */
-    const shortestUrl =
-      await this.loadShortestUrlCachePort.findShortestUrlCache(shortestUrlKey);
+    let shortestUrl = await this.loadShortestUrlCachePort.findShortestUrlCache(
+      shortestUrlKey,
+    );
     if (shortestUrl) {
       console.log('Cache!!');
     }
@@ -27,6 +28,9 @@ export class GetOriginalUrlServiceImpl implements GetOriginalUrlUseCase {
       /**
        * DB 검색
        */
+      shortestUrl = await this.loadShortestUrlPort.findShortestUrlByKey(
+        shortestUrlKey,
+      );
       if (!shortestUrl) {
         throw new NotFoundException('저장되지 않은 URL입니다.');
       }
