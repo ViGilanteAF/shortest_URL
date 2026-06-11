@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CountService } from './count.service';
+import { CountService } from '../counter/count.service';
 import { ShortestUrl } from './domain/shortest-url';
 import { CreateShortestUrlCommand } from './port/in/create-shortest-url-command';
 import { CreateShortestUrlUseCase } from './port/in/create-shortest-url.use-case';

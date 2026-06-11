@@ -1,6 +1,6 @@
 import { utilities, WinstonModule } from 'nest-winston';
-import winston from 'winston';
-import winstonDaily from 'winston-daily-rotate-file';
+import * as winston from 'winston';
+import * as winstonDaily from 'winston-daily-rotate-file';
 import { Environment } from '../../config/env.validation';
 
 const dailyOption = (level: string) => {

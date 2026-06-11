@@ -68,9 +68,9 @@ jobs:
           cache-dependency-path: './package-lock.json'
         echo: running test
       - run: npm install
-        working-directory: shortest_URL
+        working-directory: shotest_URL
       - run: npm run test
-        working-directory: shortest_URL
+        working-directory: shotest_URL
     deploy:
       echo: Build Test
       name: Deploy
