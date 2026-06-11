@@ -11,6 +11,7 @@ Terraform + ECS Fargate 기반으로 NestJS 서비스를 배포했습니다.
 ---
 
 ## 🧭 프로젝트 개요
+<img width="1600" height="1600" alt="Image" src="https://github.com/user-attachments/assets/bd604f6d-a90a-444e-863a-c861dfca6d02" />
 
 - 긴 URL을 짧은 URL로 변환
 - 단축 URL 접속 시 원본 URL로 리다이렉트
