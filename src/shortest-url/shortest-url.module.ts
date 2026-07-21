@@ -6,14 +6,23 @@ import { CountEntity, CountSchema } from '../counter/entity/count.entity';
 import { KafkaModule } from '../kafka/kafka.module';
 
 import { CreateShortestUrlServiceImpl } from './create-shortest-url.service';
-import { MessageEntity, MessageSchema, } from './create-shortest-url/entity/message.entity';
+import {
+  MessageEntity,
+  MessageSchema,
+} from './create-shortest-url/entity/message.entity';
 import { ShortestUrlCacheRepositoryImpl } from './create-shortest-url/shortest-url-cache.adapter';
 
-import { ShortestUrlRepository, ShortestUrlRepositoryImpl, } from './create-shortest-url/shortest-url-query.adapter';
+import {
+  ShortestUrlRepository,
+  ShortestUrlRepositoryImpl,
+} from './create-shortest-url/shortest-url-query.adapter';
 import { ShortestUrlConsumer } from './create-shortest-url/shortest-url.consumer';
 import { CountRepositoryImpl } from './create-shortest-url/shortest-url.count.repository';
 
-import { ShortestUrlEntity, ShortestUrlSchema, } from './create-shortest-url/shortest-url.entity';
+import {
+  ShortestUrlEntity,
+  ShortestUrlSchema,
+} from './create-shortest-url/shortest-url.entity';
 import { ShortestUrlProducer } from './create-shortest-url/shortest-url.producer';
 import { GetShortestUrlsServiceImpl } from './create-shortest-urls.service';
 import { GetOriginalUrlServiceImpl } from './get-original-url.service';
